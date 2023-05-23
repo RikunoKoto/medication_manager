@@ -13,13 +13,24 @@ Isar medicationIsar(MedicationIsarRef ref) => throw UnimplementedError();
 MedicationManagerRepository medicationManagerRepository(
   MedicationManagerRepositoryRef ref,
 ) =>
-    MedicationManagerRepository(isar: ref.watch(medicationIsarProvider));
+    MedicationManagerRepositoryImpl(isar: ref.watch(medicationIsarProvider));
 
-class MedicationManagerRepository {
-  MedicationManagerRepository({required this.isar});
+interface class MedicationManagerRepository {
+  Future<List<MedicationItem>> fetchMedication() => throw UnimplementedError();
+  Future<List<MedicationItem>> fetchCompletedMedication() =>
+      throw UnimplementedError();
+  Future<MedicationItem> add(MedicationItemDto dto) =>
+      throw UnimplementedError();
+  Future<void> edit(MedicationItem item) => throw UnimplementedError();
+  Future<void> delete(int id) => throw UnimplementedError();
+}
+
+class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
+  MedicationManagerRepositoryImpl({required this.isar});
 
   final Isar isar;
 
+  @override
   Future<List<MedicationItem>> fetchMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
@@ -29,6 +40,7 @@ class MedicationManagerRepository {
     return medicationItemDtos.map((dto) => dto.toDomain()).toList();
   }
 
+  @override
   Future<List<MedicationItem>> fetchCompletedMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
@@ -38,6 +50,7 @@ class MedicationManagerRepository {
     return medicationItemDtos.map((dto) => dto.toDomain()).toList();
   }
 
+  @override
   Future<MedicationItem> add(MedicationItemDto dto) async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
 
@@ -52,15 +65,22 @@ class MedicationManagerRepository {
     return medicationItem;
   }
 
-  Future<void> edit(MedicationItemDto dto) async {
+  @override
+  Future<void> edit(MedicationItem item) async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
 
-    final medicationItem = await isar.writeTxn(() async {
-      final id = await medicationItemDtoCollection.put(dto);
-      final medicationItem =
-          (await medicationItemDtoCollection.get(id))!.toDomain();
+    await isar.writeTxn(
+      () => medicationItemDtoCollection.put(MedicationItemDto.fromDomain(item)),
+    );
 
-      return medicationItem;
-    });
+    return;
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    final medicationItemDtoCollection = isar.medicationItemDtos;
+    await isar.writeTxn(
+      () => medicationItemDtoCollection.delete(id),
+    );
   }
 }

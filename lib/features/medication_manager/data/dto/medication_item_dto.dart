@@ -40,6 +40,8 @@ class MedicationItemDto {
 
   final DateTime dosingPeriod;
 
+  //　完了状態で検索する為
+  @Index()
   final bool isCompleted;
 
   MedicationItem toDomain() => MedicationItem(
