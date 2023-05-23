@@ -50,7 +50,21 @@ const MedicationItemDtoSchema = CollectionSchema(
   deserialize: _medicationItemDtoDeserialize,
   deserializeProp: _medicationItemDtoDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'isCompleted': IndexSchema(
+      id: -7936144632215868537,
+      name: r'isCompleted',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isCompleted',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _medicationItemDtoGetId,
@@ -142,6 +156,15 @@ extension MedicationItemDtoQueryWhereSort
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhere>
+      anyIsCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isCompleted'),
+      );
+    });
+  }
 }
 
 extension MedicationItemDtoQueryWhere
@@ -211,6 +234,51 @@ extension MedicationItemDtoQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
+      isCompletedEqualTo(bool isCompleted) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isCompleted',
+        value: [isCompleted],
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
+      isCompletedNotEqualTo(bool isCompleted) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isCompleted',
+              lower: [],
+              upper: [isCompleted],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isCompleted',
+              lower: [isCompleted],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isCompleted',
+              lower: [isCompleted],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isCompleted',
+              lower: [],
+              upper: [isCompleted],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }

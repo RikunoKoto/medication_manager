@@ -1,14 +1,9 @@
 import 'package:isar/isar.dart';
 
-import '../../domain/medication_item.dart';
+import '../../domain/Entity/medication_item.dart';
 
 part 'medication_item_dto.g.dart';
 
-/// Isar専用のDTO(Data Transfer Object)
-///
-/// Isarはfreezedをサポートしていないため、DTOに変換しています。
-///
-/// DTOはドメインへ変換も含めたデータ受け渡し専用のクラスと定義しています。
 @collection
 class MedicationItemDto {
   MedicationItemDto({

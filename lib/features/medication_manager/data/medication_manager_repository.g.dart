@@ -24,7 +24,7 @@ final medicationIsarProvider = AutoDisposeProvider<Isar>.internal(
 
 typedef MedicationIsarRef = AutoDisposeProviderRef<Isar>;
 String _$medicationManagerRepositoryHash() =>
-    r'ab02c6ddb8625148b7e8bfdeee93ef13779611f9';
+    r'b784275a32502d69328134453ba2bb51b15cb84a';
 
 /// See also [medicationManagerRepository].
 @ProviderFor(medicationManagerRepository)
