@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MedicationManagerPage extends StatelessWidget {
-  const MedicationManagerPage({super.key});
+class MedicationListPage extends StatelessWidget {
+  const MedicationListPage({super.key});
 
   @override
   Widget build(BuildContext context) {

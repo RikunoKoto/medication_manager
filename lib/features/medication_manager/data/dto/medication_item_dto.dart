@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
 
-import '../../domain/Entity/medication_item.dart';
+import '../../domain/entity/medication_item.dart';
 
 part 'medication_item_dto.g.dart';
 

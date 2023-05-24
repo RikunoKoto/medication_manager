@@ -16,13 +16,13 @@ class DeleteMedicationUsecase {
 
   final MedicationManagerRepository repository;
 
-  Future<void> call(int id) async {
+  Future<void> call({required int id}) async {
     try {
       await repository.delete(id);
       return;
     } catch (e) {
       logger.warning('DeleteTodosUsecaseでのエラー');
-      //throw CustomException('メモをローカルから削除できませんでした。');
+      throw Exception('メモをローカルから削除できませんでした。');
     }
   }
 }

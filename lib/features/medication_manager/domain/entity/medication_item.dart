@@ -19,6 +19,9 @@ class MedicationItem with _$MedicationItem {
     /// 服用期間
     required DateTime dosingPeriod,
 
+    /// 服用回数overフラグ
+    @Default(false) bool isOverflow,
+
     ///　期間終了フラグ
     @Default(false) bool isCompleted,
   }) = _MedicationItem;
