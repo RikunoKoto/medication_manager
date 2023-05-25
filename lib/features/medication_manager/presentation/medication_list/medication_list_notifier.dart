@@ -26,14 +26,14 @@ class MedicationListNotifier extends _$MedicationListNotifier {
     required DateTime dosingPeriod,
   }) async {
     state = await AsyncValue.guard(() async {
-      final todoItem = await ref.read(addMedicationUsecaseProvider)(
+      final medicationItem = await ref.read(addMedicationUsecaseProvider)(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
         dosingPeriod: dosingPeriod,
       );
 
-      return state.value!.add(todoItem);
+      return state.value!.add(medicationItem);
     });
   }
 
@@ -45,7 +45,7 @@ class MedicationListNotifier extends _$MedicationListNotifier {
     required MedicationItem item,
   }) async {
     state = await AsyncValue.guard(() async {
-      final todoItem = await ref.read(editMedicationUsecaseProvider)(
+      final medicationItem = await ref.read(editMedicationUsecaseProvider)(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
@@ -53,7 +53,7 @@ class MedicationListNotifier extends _$MedicationListNotifier {
         item: item,
       );
 
-      return state.value!.edit(todoItem);
+      return state.value!.edit(medicationItem);
     });
   }
 
@@ -63,7 +63,7 @@ class MedicationListNotifier extends _$MedicationListNotifier {
     state = await AsyncValue.guard(() async {
       await ref.read(deleteMedicationUsecaseProvider)(id: id);
 
-      return state.value!.edit(todoItem);
+      return state.value!.remove(id);
     });
   }
 }

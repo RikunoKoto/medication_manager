@@ -21,12 +21,12 @@ final _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) =>
-          const CreatePage(),
+          const MedicationListPage(),
     ),
     GoRoute(
       path: '/create',
       builder: (BuildContext context, GoRouterState state) =>
-          const MedicationListPage(),
+          const CreatePage(),
     ),
     GoRoute(
       path: '/medication:id',

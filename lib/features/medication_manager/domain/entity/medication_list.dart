@@ -20,20 +20,24 @@ class MedicationList with _$MedicationList {
 
   MedicationList add(MedicationItem item) => copyWith(items: [item, ...items]);
 
-  MedicationList edit(MedicationItem todoItem) {
-    final index = items.map((item) => item.id).toList().indexOf(todoItem.id);
+  MedicationList edit(MedicationItem medicationItem) {
+    final index = items.map((item) => item.id).toList().indexOf(
+          medicationItem.id,
+        );
 
     final editedItem = List.of(items)
       ..removeAt(index)
-      ..insert(0, todoItem);
+      ..insert(0, medicationItem);
 
     return copyWith(items: editedItem);
   }
 
-  MedicationList remove(MedicationItem todoItem) {
-    final index = items.map((item) => item.id).toList().indexOf(todoItem.id);
+  MedicationList remove(int id) {
+    final index = items.map((item) => item.id).toList().indexOf(id);
     final removedItem = List.of(items)..removeAt(index);
 
     return copyWith(items: removedItem);
   }
+
+  int get length => items.length;
 }

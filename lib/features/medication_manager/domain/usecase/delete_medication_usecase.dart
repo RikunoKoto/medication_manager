@@ -19,6 +19,7 @@ class DeleteMedicationUsecase {
   Future<void> call({required int id}) async {
     try {
       await repository.delete(id);
+
       return;
     } catch (e) {
       logger.warning('DeleteTodosUsecaseでのエラー');

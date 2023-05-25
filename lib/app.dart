@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:medication_manager/router/router.dart';
 
 import 'app_lifecycle_state_provider.dart';
+import 'utils/color_schemes.g.dart';
 import 'utils/logger.dart';
 
 class App extends ConsumerWidget {
@@ -18,6 +19,8 @@ class App extends ConsumerWidget {
     );
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       localizationsDelegates: const [

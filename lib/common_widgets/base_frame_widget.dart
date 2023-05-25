@@ -8,6 +8,7 @@ class BaseFrameWidget extends StatelessWidget {
     required this.body,
     this.hasPrevButton = true,
     this.drawer,
+    this.floatingActionButton,
     this.scaffoldKey,
     this.bottomBar,
   });
@@ -30,6 +31,9 @@ class BaseFrameWidget extends StatelessWidget {
   //ドロワー
   final Widget? drawer;
 
+  //フロートボタン
+  final Widget? floatingActionButton;
+
   //ドロワーを開くときに使用
   final GlobalKey? scaffoldKey;
 
@@ -48,15 +52,16 @@ class BaseFrameWidget extends StatelessWidget {
   //共通scaffold
   Widget _baseScaffold(BuildContext context) {
     return Scaffold(
-      ///HACK: 一次的な対応
       resizeToAvoidBottomInset: false,
       key: scaffoldKey,
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.white,
       drawer: drawer,
       appBar: appBar,
       body: SafeArea(child: body),
       bottomNavigationBar:
           bottomBar != null ? SafeArea(child: bottomBar!) : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: floatingActionButton,
     );
   }
 }
