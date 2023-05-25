@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medication_manager/common_widgets/base_frame_widget.dart';
+import 'package:medication_manager/features/medication_manager/presentation/widgets/custom_button.dart';
 import 'package:medication_manager/features/medication_manager/presentation/widgets/custom_form.dart';
-import 'package:medication_manager/features/medication_manager/presentation/widgets/medication_info_list.dart';
+import 'package:medication_manager/features/medication_manager/presentation/widgets/medication_info_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entity/medication_item.dart';
+import '../medication_list/medication_list_notifier.dart';
 
 part 'create_page.g.dart';
 
@@ -63,6 +66,21 @@ class CreatePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nameTextEditingController =
         ref.watch(_nameTextEditingControllerProvider(item?.name ?? ''));
+
+    Future<void> onTap() async {
+      // await _save(
+      //           ref: ref,
+      //           title: titleEditingController.text,
+      //           discription: discriptionEditingController.text,
+      //         );
+      // エラーが生じた場合はダイアログを出すため、
+      // 画面遷移をさせないよう早期リターンを行っています。
+      if (ref.read(medicationListNotifierProvider) is AsyncError) {
+        return;
+      }
+      context.pop();
+    }
+
     return BaseFrameWidget(
       appBar: AppBar(title: const Icon(Icons.edit)),
       title: 'Create Page',
@@ -85,8 +103,15 @@ class CreatePage extends ConsumerWidget {
               child: Text('お薬情報'),
             ),
             const Gap(10),
-            const MedicationInfoList(),
+            MedicationInfoForm(item: item),
           ],
+        ),
+      ),
+      bottomBar: CustomButton(
+        onTap: onTap,
+        child: const Text(
+          '保存',
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );
