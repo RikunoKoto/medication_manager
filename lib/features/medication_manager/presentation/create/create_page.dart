@@ -82,7 +82,10 @@ class CreatePage extends ConsumerWidget {
     }
 
     return BaseFrameWidget(
-      appBar: AppBar(title: const Icon(Icons.edit)),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Icon(Icons.edit),
+      ),
       title: 'Create Page',
       body: SingleChildScrollView(
         child: Column(

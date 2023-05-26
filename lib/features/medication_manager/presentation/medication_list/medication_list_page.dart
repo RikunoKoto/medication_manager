@@ -20,6 +20,7 @@ class MedicationListPage extends ConsumerWidget {
     final selectedIndex = ref.watch(selectedIndexProvider);
     return BaseFrameWidget(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('お薬一覧'),
       ),
       title: 'Medication Manager',
