@@ -18,39 +18,27 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return SizedBox(
       height: 75,
       child: Column(
         children: [
-          const Divider(
-            height: 0,
-            thickness: 0.5,
-            color: Colors.white,
-          ),
           Expanded(
-            child: Theme(
-              data: ThemeData(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.white,
-              ),
-              child: BottomNavigationBar(
-                items: [
-                  _buttonItem(
-                    iconData: const Icon(MyFlutterApp.pills),
-                    label: 'お薬',
-                  ),
-                  _buttonItem(
-                    iconData: const Icon(MyFlutterApp.history),
-                    label: '履歴',
-                  ),
-                ],
-                //backgroundColor: Colors.grey.shade900,
-                //selectedItemColor: Colors.white,
-                //unselectedItemColor: Colors.grey,
-                elevation: 0,
-                onTap: onTap,
-                currentIndex: selectedIndex,
-              ),
+            child: BottomNavigationBar(
+              items: [
+                _buttonItem(
+                  iconData: Icon(MyFlutterApp.pills, color: colors.tertiary),
+                  label: 'お薬',
+                ),
+                _buttonItem(
+                  iconData: Icon(MyFlutterApp.history, color: colors.tertiary),
+                  label: '履歴',
+                ),
+              ],
+              backgroundColor: colors.background.withOpacity(.2),
+              elevation: 0,
+              onTap: onTap,
+              currentIndex: selectedIndex,
             ),
           ),
         ],

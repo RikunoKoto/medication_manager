@@ -53,14 +53,16 @@ class BaseFrameWidget extends StatelessWidget {
   Widget _baseScaffold(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       key: scaffoldKey,
-      //backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       drawer: drawer,
       appBar: appBar,
       body: SafeArea(child: body),
       bottomNavigationBar:
           bottomBar != null ? SafeArea(child: bottomBar!) : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: floatingActionButton,
     );
   }

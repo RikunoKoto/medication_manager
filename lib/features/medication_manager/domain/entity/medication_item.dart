@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'medication_item.freezed.dart';
 
@@ -17,7 +18,7 @@ class MedicationItem with _$MedicationItem {
     required int dosage,
 
     /// 服用期間
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
 
     /// 服用回数overフラグ
     @Default(false) bool isOverflow,
@@ -31,14 +32,23 @@ class MedicationItem with _$MedicationItem {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
   }) =>
       copyWith(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingPeriod: dosingPeriod,
+        dosingAt: dosingAt,
       );
 
+  MedicationItem toOverflow({required bool toOverflow}) =>
+      copyWith(isOverflow: toOverflow);
+
+  MedicationItem toCompleted({required bool toCompleted}) =>
+      copyWith(isCompleted: toCompleted);
+
   bool get isEmptyName => name.isEmpty;
+
+  String get stringDosingAt =>
+      DateFormat('yyyy-MM-dd').format(dosingAt).substring(0, 10);
 }

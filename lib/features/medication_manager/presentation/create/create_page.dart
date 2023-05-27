@@ -2,56 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:medication_manager/common_widgets/base_frame_widget.dart';
-import 'package:medication_manager/features/medication_manager/presentation/widgets/custom_button.dart';
-import 'package:medication_manager/features/medication_manager/presentation/widgets/custom_form.dart';
-import 'package:medication_manager/features/medication_manager/presentation/widgets/medication_info_form.dart';
+import 'package:medication_manager/features/medication_manager/presentation/create/widgets/custom_button.dart';
+import 'package:medication_manager/features/medication_manager/presentation/create/widgets/custom_form.dart';
+import 'package:medication_manager/features/medication_manager/presentation/create/widgets/medication_info_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entity/medication_item.dart';
-import '../medication_list/medication_list_notifier.dart';
+import '../medication_list_async_notifier.dart';
 
 part 'create_page.g.dart';
 
+//　お薬の名前を保持するprovider
 @riverpod
-TextEditingController _nameTextEditingController(
+Raw<TextEditingController> _nameTextEditingController(
   _NameTextEditingControllerRef ref,
   String name,
 ) {
   final controller = TextEditingController(text: name);
-
-  return controller;
-}
-
-@riverpod
-TextEditingController _dosageFrequencyTextEditingController(
-  _DosageFrequencyTextEditingControllerRef ref,
-  String dosageFrequency,
-) {
-  final controller = TextEditingController(text: dosageFrequency);
-  ref.onDispose(controller.dispose);
-
-  return controller;
-}
-
-@riverpod
-TextEditingController _dosageTextEditingController(
-  _DosageTextEditingControllerRef ref,
-  String dosage,
-) {
-  final controller = TextEditingController(text: dosage);
-  ref.onDispose(controller.dispose);
-
-  return controller;
-}
-
-@riverpod
-TextEditingController _dosingPeriodTextEditingController(
-  _DosingPeriodTextEditingControllerRef ref,
-  String dosingPeriod,
-) {
-  final controller = TextEditingController(text: dosingPeriod);
-  ref.onDispose(controller.dispose);
 
   return controller;
 }
@@ -62,24 +31,45 @@ class CreatePage extends ConsumerWidget {
   /// 編集操作の場合の服薬情報
   final MedicationItem? item;
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final nameTextEditingController =
-        ref.watch(_nameTextEditingControllerProvider(item?.name ?? ''));
-
-    Future<void> onTap() async {
-      // await _save(
-      //           ref: ref,
-      //           title: titleEditingController.text,
-      //           discription: discriptionEditingController.text,
-      //         );
-      // エラーが生じた場合はダイアログを出すため、
-      // 画面遷移をさせないよう早期リターンを行っています。
-      if (ref.read(medicationListNotifierProvider) is AsyncError) {
+  Future<void> onTap({
+    required WidgetRef ref,
+    required String name,
+    required int dosageFrequency,
+    required int dosage,
+    required String dosingAt,
+  }) async {
+    final asyncNotifier =
+        ref.read(medicationListAsyncNotifierProvider.notifier);
+    final parseDosingPeriod = DateFormat('yyyy-MM-dd').parse(dosingAt);
+    if (item == null) {
+      await asyncNotifier.addTodoItem(
+        name: name,
+        dosageFrequency: dosageFrequency,
+        dosage: dosage,
+        dosingAt: parseDosingPeriod,
+      );
+    } else {
+      if (name == item!.name &&
+          dosageFrequency == item!.dosageFrequency &&
+          dosage == item!.dosage &&
+          parseDosingPeriod == item!.dosingAt) {
         return;
       }
-      context.pop();
+      await asyncNotifier.editMedicationItem(
+        name: name,
+        dosageFrequency: dosageFrequency,
+        dosage: dosage,
+        dosingAt: parseDosingPeriod,
+        item: item!,
+      );
     }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
+    final nameTextEditingController =
+        ref.watch(_nameTextEditingControllerProvider(item?.name ?? ''));
 
     return BaseFrameWidget(
       appBar: AppBar(
@@ -92,18 +82,25 @@ class CreatePage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Gap(20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25),
-              child: Text('お薬の名前'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                'お薬の名前',
+                style: TextStyle(color: colors.onBackground),
+              ),
             ),
             const Gap(10),
-            CommonForm(
+            CustomForm(
               controller: nameTextEditingController,
+              item: item,
             ),
             const Gap(10),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25),
-              child: Text('お薬情報'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                'お薬情報',
+                style: TextStyle(color: colors.onBackground),
+              ),
             ),
             const Gap(10),
             MedicationInfoForm(item: item),
@@ -111,10 +108,36 @@ class CreatePage extends ConsumerWidget {
         ),
       ),
       bottomBar: CustomButton(
-        onTap: onTap,
-        child: const Text(
+        onTap: () async {
+          final name = nameTextEditingController.text;
+          final dosageFrequency =
+              ref.watch(dosageFrequencyCountFamilyProvider(item));
+          final dosage = ref.watch(dosageCountFamilyProvider(item));
+          final dosingAt = ref.watch(fixedTimeProvider(item));
+          if (name.isEmpty ||
+              dosageFrequency == 0 ||
+              dosage == 0 ||
+              dosingAt.isEmpty) {
+            return;
+          }
+          await onTap(
+            ref: ref,
+            name: name,
+            dosageFrequency: dosageFrequency,
+            dosage: dosage,
+            dosingAt: dosingAt,
+          );
+          //　エラーが生じた場合画面遷移をさせないよう早期リターン
+          if (ref.read(medicationListAsyncNotifierProvider) is AsyncError) {
+            return;
+          }
+          if (context.mounted) {
+            context.pop();
+          }
+        },
+        child: Text(
           '保存',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: colors.onPrimary),
         ),
       ),
     );

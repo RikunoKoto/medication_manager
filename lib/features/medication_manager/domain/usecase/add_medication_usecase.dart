@@ -22,14 +22,14 @@ class AddMedicationUsecase {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
   }) async {
     try {
       final medicationItemDto = MedicationItemDto(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingPeriod: dosingPeriod,
+        dosingAt: dosingAt,
       );
       final medicationItem = await repository.add(medicationItemDto);
       return medicationItem;

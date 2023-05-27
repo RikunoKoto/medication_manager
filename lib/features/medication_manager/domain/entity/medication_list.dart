@@ -18,7 +18,7 @@ class MedicationList with _$MedicationList {
     );
   }
 
-  MedicationList add(MedicationItem item) => copyWith(items: [item, ...items]);
+  MedicationList add(MedicationItem item) => copyWith(items: [...items, item]);
 
   MedicationList edit(MedicationItem medicationItem) {
     final index = items.map((item) => item.id).toList().indexOf(
@@ -27,7 +27,7 @@ class MedicationList with _$MedicationList {
 
     final editedItem = List.of(items)
       ..removeAt(index)
-      ..insert(0, medicationItem);
+      ..insert(index, medicationItem);
 
     return copyWith(items: editedItem);
   }

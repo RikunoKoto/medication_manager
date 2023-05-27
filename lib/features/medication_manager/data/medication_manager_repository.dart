@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import 'package:medication_manager/features/medication_manager/data/dto/medication_item_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../utils/logger.dart';
 import '../domain/entity/medication_item.dart';
 
 part 'medication_manager_repository.g.dart';
@@ -44,6 +45,8 @@ class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
   Future<List<MedicationItem>> fetchCompletedMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
+        .where()
+        .dosingAtLessThan(DateTime.now())
         .filter()
         .isCompletedEqualTo(true)
         .findAll();

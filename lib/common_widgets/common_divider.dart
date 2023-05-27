@@ -17,7 +17,7 @@ class CommonDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Divider(
       height: 0,
-      thickness: 0.5,
+      thickness: 1,
       indent: leftIndent,
       endIndent: rightIndent,
     );

@@ -20,7 +20,7 @@ class FetchMedicationUsecase {
   Future<List<MedicationItem>> call() async {
     try {
       final medicationItems = await repository.fetchMedication();
-
+      
       return medicationItems;
     } catch (e) {
       logger.warning('DeleteTodosUsecaseでのエラー');

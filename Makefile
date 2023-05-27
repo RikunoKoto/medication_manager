@@ -2,6 +2,7 @@
 
 setup:
 	flutter clean
+	dart run custom_lint
 	flutter pub get
 
 build_runner:

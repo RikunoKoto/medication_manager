@@ -18,11 +18,12 @@ class DeleteMedicationUsecase {
 
   Future<void> call({required int id}) async {
     try {
+      logger.fine(id);
       await repository.delete(id);
 
       return;
     } catch (e) {
-      logger.warning('DeleteTodosUsecaseでのエラー');
+      logger.shout('DeleteTodosUsecaseでのエラー');
       throw Exception('メモをローカルから削除できませんでした。');
     }
   }

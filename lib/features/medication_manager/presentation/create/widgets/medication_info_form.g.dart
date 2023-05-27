@@ -2,14 +2,13 @@
 
 // ignore_for_file: type=lint, implicit_dynamic_parameter, implicit_dynamic_type, implicit_dynamic_method, strict_raw_type
 
-part of 'create_page.dart';
+part of 'medication_info_form.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$nameTextEditingControllerHash() =>
-    r'6d7c56afb6647506324730188272ccbe842e57c5';
+String _$periodFamilyHash() => r'5843cb7b9684304088d43bf038c8ba8d6fee0519';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -32,33 +31,32 @@ class _SystemHash {
   }
 }
 
-typedef _NameTextEditingControllerRef
-    = AutoDisposeProviderRef<TextEditingController>;
+typedef PeriodFamilyRef = AutoDisposeProviderRef<String>;
 
-/// See also [_nameTextEditingController].
-@ProviderFor(_nameTextEditingController)
-const _nameTextEditingControllerProvider = _NameTextEditingControllerFamily();
+/// See also [periodFamily].
+@ProviderFor(periodFamily)
+const periodFamilyProvider = PeriodFamilyFamily();
 
-/// See also [_nameTextEditingController].
-class _NameTextEditingControllerFamily extends Family<TextEditingController> {
-  /// See also [_nameTextEditingController].
-  const _NameTextEditingControllerFamily();
+/// See also [periodFamily].
+class PeriodFamilyFamily extends Family<String> {
+  /// See also [periodFamily].
+  const PeriodFamilyFamily();
 
-  /// See also [_nameTextEditingController].
-  _NameTextEditingControllerProvider call(
-    String name,
+  /// See also [periodFamily].
+  PeriodFamilyProvider call(
+    MedicationItem? item,
   ) {
-    return _NameTextEditingControllerProvider(
-      name,
+    return PeriodFamilyProvider(
+      item,
     );
   }
 
   @override
-  _NameTextEditingControllerProvider getProviderOverride(
-    covariant _NameTextEditingControllerProvider provider,
+  PeriodFamilyProvider getProviderOverride(
+    covariant PeriodFamilyProvider provider,
   ) {
     return call(
-      provider.name,
+      provider.item,
     );
   }
 
@@ -74,42 +72,41 @@ class _NameTextEditingControllerFamily extends Family<TextEditingController> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'_nameTextEditingControllerProvider';
+  String? get name => r'periodFamilyProvider';
 }
 
-/// See also [_nameTextEditingController].
-class _NameTextEditingControllerProvider
-    extends AutoDisposeProvider<TextEditingController> {
-  /// See also [_nameTextEditingController].
-  _NameTextEditingControllerProvider(
-    this.name,
+/// See also [periodFamily].
+class PeriodFamilyProvider extends AutoDisposeProvider<String> {
+  /// See also [periodFamily].
+  PeriodFamilyProvider(
+    this.item,
   ) : super.internal(
-          (ref) => _nameTextEditingController(
+          (ref) => periodFamily(
             ref,
-            name,
+            item,
           ),
-          from: _nameTextEditingControllerProvider,
-          name: r'_nameTextEditingControllerProvider',
+          from: periodFamilyProvider,
+          name: r'periodFamilyProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$nameTextEditingControllerHash,
-          dependencies: _NameTextEditingControllerFamily._dependencies,
+                  : _$periodFamilyHash,
+          dependencies: PeriodFamilyFamily._dependencies,
           allTransitiveDependencies:
-              _NameTextEditingControllerFamily._allTransitiveDependencies,
+              PeriodFamilyFamily._allTransitiveDependencies,
         );
 
-  final String name;
+  final MedicationItem? item;
 
   @override
   bool operator ==(Object other) {
-    return other is _NameTextEditingControllerProvider && other.name == name;
+    return other is PeriodFamilyProvider && other.item == item;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, name.hashCode);
+    hash = _SystemHash.combine(hash, item.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -1,20 +1,21 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../domain/entity/medication_item.dart';
-import '../../domain/entity/medication_list.dart';
-import '../../domain/usecase/add_medication_usecase.dart';
-import '../../domain/usecase/delete_medication_usecase.dart';
-import '../../domain/usecase/edit_medication_usecase.dart';
-import '../../domain/usecase/fetch_medication_usecase.dart';
+import '../domain/entity/medication_item.dart';
+import '../domain/entity/medication_list.dart';
+import '../domain/usecase/add_medication_usecase.dart';
+import '../domain/usecase/delete_medication_usecase.dart';
+import '../domain/usecase/edit_medication_usecase.dart';
+import '../domain/usecase/fetch_medication_usecase.dart';
 
-part 'medication_list_notifier.g.dart';
+part 'medication_list_async_notifier.g.dart';
 
 @riverpod
-class MedicationListNotifier extends _$MedicationListNotifier {
+class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
   @override
   FutureOr<MedicationList> build() async {
     final medicationList = MedicationList(items: []);
     final medicationItemList = await ref.read(fetchMedicationUsecaseProvider)();
+    
     final result = medicationList.fetch(medicationItemList);
     return result;
   }
@@ -23,14 +24,14 @@ class MedicationListNotifier extends _$MedicationListNotifier {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
   }) async {
     state = await AsyncValue.guard(() async {
       final medicationItem = await ref.read(addMedicationUsecaseProvider)(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingPeriod: dosingPeriod,
+        dosingAt: dosingAt,
       );
 
       return state.value!.add(medicationItem);
@@ -41,7 +42,7 @@ class MedicationListNotifier extends _$MedicationListNotifier {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
     required MedicationItem item,
   }) async {
     state = await AsyncValue.guard(() async {
@@ -49,7 +50,7 @@ class MedicationListNotifier extends _$MedicationListNotifier {
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingPeriod: dosingPeriod,
+        dosingAt: dosingAt,
         item: item,
       );
 

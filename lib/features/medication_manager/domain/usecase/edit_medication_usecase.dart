@@ -21,7 +21,7 @@ class EditMedicationUsecase {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingPeriod,
+    required DateTime dosingAt,
     required MedicationItem item,
   }) async {
     try {
@@ -29,7 +29,7 @@ class EditMedicationUsecase {
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingPeriod: dosingPeriod,
+        dosingAt: dosingAt,
       );
       await repository.edit(updatedMedicationItem);
 
