@@ -15,9 +15,21 @@ String periodFamily(PeriodFamilyRef ref, MedicationItem? item) {
   if (item == null) {
     return '';
   }
-  final periodTime = item.stringDosingAt;
+  final periodTime = item.stringDosingEndAt;
   return periodTime;
 }
+
+// 確認ボタンが押下された後の時間を保持するprovider
+final fixedTimeProvider =
+    StateProvider.autoDispose.family<String, MedicationItem?>(
+  (ref, item) {
+    if (item == null) {
+      return '';
+    }
+    final dosingEndAt = item.stringDosingEndAt;
+    return dosingEndAt;
+  },
+);
 
 // 服用回数を保持するprovider
 final dosageFrequencyCountFamilyProvider =
@@ -29,8 +41,6 @@ final dosageFrequencyCountFamilyProvider =
   return dosageFrequency;
 });
 
-typedef CountParams = ({int dosageFrequency, int dosage});
-
 // 服用量を保持するprovider
 final dosageCountFamilyProvider =
     StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
@@ -41,17 +51,18 @@ final dosageCountFamilyProvider =
   return dosage;
 });
 
-// 確認ボタンが押下された後の時間を保持するprovider
-final fixedTimeProvider =
-    StateProvider.autoDispose.family<String, MedicationItem?>(
-  (ref, item) {
-    if (item == null) {
-      return '';
-    }
-    final dosingAt = item.stringDosingAt;
-    return dosingAt;
-  },
-);
+//今日の服用回数を保持するprovider
+final todayDosageCountFamilyProvider =
+    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
+  if (item == null) {
+    return 0;
+  }
+  if (item.todayDosage > item.dosageFrequency) {
+    return item.dosageFrequency;
+  }
+  final dosage = item.todayDosage;
+  return dosage;
+});
 
 class MedicationInfoForm extends ConsumerWidget {
   const MedicationInfoForm({required this.item, super.key});
@@ -87,6 +98,9 @@ class MedicationInfoForm extends ConsumerWidget {
         ref.watch(dosageCountFamilyProvider(item).notifier);
     final fixedNotifier = ref.watch(fixedTimeProvider(item).notifier);
     final colors = Theme.of(context).colorScheme;
+    final todayDosageCount = ref.watch(todayDosageCountFamilyProvider(item));
+    final todayDosageCountNotifier =
+        ref.watch(todayDosageCountFamilyProvider(item).notifier);
     return LimitedBox(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -99,7 +113,23 @@ class MedicationInfoForm extends ConsumerWidget {
                   count: dosageFrequencyCount > 0
                       ? '$dosageFrequencyCount回'
                       : '設定なし',
-                  countNotifier: dosageFrequencyCountNotifier,
+                  onIncrementTap: () =>
+                      dosageFrequencyCountNotifier.update((state) {
+                    if (state < 10) {
+                      state++;
+                    }
+                    return state;
+                  }),
+                  onDecrementTap: () =>
+                      dosageFrequencyCountNotifier.update((state) {
+                    if (state < todayDosageCount) {
+                      return todayDosageCount;
+                    }
+                    if (state > 0) {
+                      state--;
+                    }
+                    return state;
+                  }),
                 ),
                 leading: Text(
                   '服用回数',
@@ -108,14 +138,24 @@ class MedicationInfoForm extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onTap: () {},
                 isTrailing: false,
               ),
               const CommonDivider(leftIndent: 15, rightIndent: 15),
               MenuTile(
                 title: CustomCountButton(
                   count: dosageCount > 0 ? '$dosageCount錠' : '設定なし',
-                  countNotifier: dosageCountNotifier,
+                  onIncrementTap: () => dosageCountNotifier.update((state) {
+                    if (state < 10) {
+                      state++;
+                    }
+                    return state;
+                  }),
+                  onDecrementTap: () => dosageCountNotifier.update((state) {
+                    if (state > 0) {
+                      state--;
+                    }
+                    return state;
+                  }),
                 ),
                 leading: Text(
                   '服用量(錠)',
@@ -124,7 +164,37 @@ class MedicationInfoForm extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onTap: () {},
+                isTrailing: false,
+              ),
+              const CommonDivider(leftIndent: 15, rightIndent: 15),
+              MenuTile(
+                title: CustomCountButton(
+                  count: '$todayDosageCount/$dosageFrequencyCount (回)',
+                  onIncrementTap: () =>
+                      todayDosageCountNotifier.update((state) {
+                    if (dosageFrequencyCount == 0) {
+                      return 0;
+                    }
+                    if (state < dosageFrequencyCount) {
+                      state++;
+                    }
+                    return state;
+                  }),
+                  onDecrementTap: () =>
+                      todayDosageCountNotifier.update((state) {
+                    if (state > 0) {
+                      state--;
+                    }
+                    return state;
+                  }),
+                ),
+                leading: Text(
+                  '今日の服用回数',
+                  style: TextStyle(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 isTrailing: false,
               ),
               const CommonDivider(leftIndent: 15, rightIndent: 15),
@@ -159,7 +229,7 @@ class MenuTile extends StatelessWidget {
   const MenuTile({
     required this.title,
     required this.leading,
-    required this.onTap,
+    this.onTap,
     this.isTrailing = true,
     super.key,
   });
@@ -168,7 +238,7 @@ class MenuTile extends StatelessWidget {
   final Widget leading;
   final bool isTrailing;
 
-  final void Function() onTap;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {

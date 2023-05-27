@@ -27,11 +27,14 @@ mixin _$MedicationItem {
   /// 用量（ex.２錠）
   int get dosage => throw _privateConstructorUsedError;
 
-  /// 服用期間
-  DateTime get dosingAt => throw _privateConstructorUsedError;
+  /// 今日の服用数
+  int get todayDosage => throw _privateConstructorUsedError;
 
-  /// 服用回数overフラグ
-  bool get isOverflow => throw _privateConstructorUsedError;
+  /// 服用開始
+  DateTime get dosingStartAt => throw _privateConstructorUsedError;
+
+  /// 服用終了
+  DateTime get dosingEndAt => throw _privateConstructorUsedError;
 
   ///　期間終了フラグ
   bool get isCompleted => throw _privateConstructorUsedError;
@@ -52,8 +55,9 @@ abstract class $MedicationItemCopyWith<$Res> {
       String name,
       int dosageFrequency,
       int dosage,
-      DateTime dosingAt,
-      bool isOverflow,
+      int todayDosage,
+      DateTime dosingStartAt,
+      DateTime dosingEndAt,
       bool isCompleted});
 }
 
@@ -74,8 +78,9 @@ class _$MedicationItemCopyWithImpl<$Res, $Val extends MedicationItem>
     Object? name = null,
     Object? dosageFrequency = null,
     Object? dosage = null,
-    Object? dosingAt = null,
-    Object? isOverflow = null,
+    Object? todayDosage = null,
+    Object? dosingStartAt = null,
+    Object? dosingEndAt = null,
     Object? isCompleted = null,
   }) {
     return _then(_value.copyWith(
@@ -95,14 +100,18 @@ class _$MedicationItemCopyWithImpl<$Res, $Val extends MedicationItem>
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
               as int,
-      dosingAt: null == dosingAt
-          ? _value.dosingAt
-          : dosingAt // ignore: cast_nullable_to_non_nullable
+      todayDosage: null == todayDosage
+          ? _value.todayDosage
+          : todayDosage // ignore: cast_nullable_to_non_nullable
+              as int,
+      dosingStartAt: null == dosingStartAt
+          ? _value.dosingStartAt
+          : dosingStartAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      isOverflow: null == isOverflow
-          ? _value.isOverflow
-          : isOverflow // ignore: cast_nullable_to_non_nullable
-              as bool,
+      dosingEndAt: null == dosingEndAt
+          ? _value.dosingEndAt
+          : dosingEndAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       isCompleted: null == isCompleted
           ? _value.isCompleted
           : isCompleted // ignore: cast_nullable_to_non_nullable
@@ -124,8 +133,9 @@ abstract class _$$_MedicationItemCopyWith<$Res>
       String name,
       int dosageFrequency,
       int dosage,
-      DateTime dosingAt,
-      bool isOverflow,
+      int todayDosage,
+      DateTime dosingStartAt,
+      DateTime dosingEndAt,
       bool isCompleted});
 }
 
@@ -144,8 +154,9 @@ class __$$_MedicationItemCopyWithImpl<$Res>
     Object? name = null,
     Object? dosageFrequency = null,
     Object? dosage = null,
-    Object? dosingAt = null,
-    Object? isOverflow = null,
+    Object? todayDosage = null,
+    Object? dosingStartAt = null,
+    Object? dosingEndAt = null,
     Object? isCompleted = null,
   }) {
     return _then(_$_MedicationItem(
@@ -165,14 +176,18 @@ class __$$_MedicationItemCopyWithImpl<$Res>
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
               as int,
-      dosingAt: null == dosingAt
-          ? _value.dosingAt
-          : dosingAt // ignore: cast_nullable_to_non_nullable
+      todayDosage: null == todayDosage
+          ? _value.todayDosage
+          : todayDosage // ignore: cast_nullable_to_non_nullable
+              as int,
+      dosingStartAt: null == dosingStartAt
+          ? _value.dosingStartAt
+          : dosingStartAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      isOverflow: null == isOverflow
-          ? _value.isOverflow
-          : isOverflow // ignore: cast_nullable_to_non_nullable
-              as bool,
+      dosingEndAt: null == dosingEndAt
+          ? _value.dosingEndAt
+          : dosingEndAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       isCompleted: null == isCompleted
           ? _value.isCompleted
           : isCompleted // ignore: cast_nullable_to_non_nullable
@@ -189,8 +204,9 @@ class _$_MedicationItem extends _MedicationItem {
       required this.name,
       required this.dosageFrequency,
       required this.dosage,
-      required this.dosingAt,
-      this.isOverflow = false,
+      this.todayDosage = 0,
+      required this.dosingStartAt,
+      required this.dosingEndAt,
       this.isCompleted = false})
       : super._();
 
@@ -209,14 +225,18 @@ class _$_MedicationItem extends _MedicationItem {
   @override
   final int dosage;
 
-  /// 服用期間
-  @override
-  final DateTime dosingAt;
-
-  /// 服用回数overフラグ
+  /// 今日の服用数
   @override
   @JsonKey()
-  final bool isOverflow;
+  final int todayDosage;
+
+  /// 服用開始
+  @override
+  final DateTime dosingStartAt;
+
+  /// 服用終了
+  @override
+  final DateTime dosingEndAt;
 
   ///　期間終了フラグ
   @override
@@ -225,7 +245,7 @@ class _$_MedicationItem extends _MedicationItem {
 
   @override
   String toString() {
-    return 'MedicationItem(id: $id, name: $name, dosageFrequency: $dosageFrequency, dosage: $dosage, dosingAt: $dosingAt, isOverflow: $isOverflow, isCompleted: $isCompleted)';
+    return 'MedicationItem(id: $id, name: $name, dosageFrequency: $dosageFrequency, dosage: $dosage, todayDosage: $todayDosage, dosingStartAt: $dosingStartAt, dosingEndAt: $dosingEndAt, isCompleted: $isCompleted)';
   }
 
   @override
@@ -238,17 +258,19 @@ class _$_MedicationItem extends _MedicationItem {
             (identical(other.dosageFrequency, dosageFrequency) ||
                 other.dosageFrequency == dosageFrequency) &&
             (identical(other.dosage, dosage) || other.dosage == dosage) &&
-            (identical(other.dosingAt, dosingAt) ||
-                other.dosingAt == dosingAt) &&
-            (identical(other.isOverflow, isOverflow) ||
-                other.isOverflow == isOverflow) &&
+            (identical(other.todayDosage, todayDosage) ||
+                other.todayDosage == todayDosage) &&
+            (identical(other.dosingStartAt, dosingStartAt) ||
+                other.dosingStartAt == dosingStartAt) &&
+            (identical(other.dosingEndAt, dosingEndAt) ||
+                other.dosingEndAt == dosingEndAt) &&
             (identical(other.isCompleted, isCompleted) ||
                 other.isCompleted == isCompleted));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, id, name, dosageFrequency,
-      dosage, dosingAt, isOverflow, isCompleted);
+      dosage, todayDosage, dosingStartAt, dosingEndAt, isCompleted);
 
   @JsonKey(ignore: true)
   @override
@@ -263,8 +285,9 @@ abstract class _MedicationItem extends MedicationItem {
       required final String name,
       required final int dosageFrequency,
       required final int dosage,
-      required final DateTime dosingAt,
-      final bool isOverflow,
+      final int todayDosage,
+      required final DateTime dosingStartAt,
+      required final DateTime dosingEndAt,
       final bool isCompleted}) = _$_MedicationItem;
   const _MedicationItem._() : super._();
 
@@ -284,12 +307,16 @@ abstract class _MedicationItem extends MedicationItem {
   int get dosage;
   @override
 
-  /// 服用期間
-  DateTime get dosingAt;
+  /// 今日の服用数
+  int get todayDosage;
   @override
 
-  /// 服用回数overフラグ
-  bool get isOverflow;
+  /// 服用開始
+  DateTime get dosingStartAt;
+  @override
+
+  /// 服用終了
+  DateTime get dosingEndAt;
   @override
 
   ///　期間終了フラグ

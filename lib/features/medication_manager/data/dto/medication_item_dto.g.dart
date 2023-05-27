@@ -29,25 +29,30 @@ const MedicationItemDtoSchema = CollectionSchema(
       name: r'dosageFrequency',
       type: IsarType.long,
     ),
-    r'dosingAt': PropertySchema(
+    r'dosingEndAt': PropertySchema(
       id: 2,
-      name: r'dosingAt',
+      name: r'dosingEndAt',
+      type: IsarType.dateTime,
+    ),
+    r'dosingStartAt': PropertySchema(
+      id: 3,
+      name: r'dosingStartAt',
       type: IsarType.dateTime,
     ),
     r'isCompleted': PropertySchema(
-      id: 3,
-      name: r'isCompleted',
-      type: IsarType.bool,
-    ),
-    r'isOverflow': PropertySchema(
       id: 4,
-      name: r'isOverflow',
+      name: r'isCompleted',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
       id: 5,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'todayDosage': PropertySchema(
+      id: 6,
+      name: r'todayDosage',
+      type: IsarType.long,
     )
   },
   estimateSize: _medicationItemDtoEstimateSize,
@@ -56,14 +61,14 @@ const MedicationItemDtoSchema = CollectionSchema(
   deserializeProp: _medicationItemDtoDeserializeProp,
   idName: r'id',
   indexes: {
-    r'dosingAt': IndexSchema(
-      id: -2309300905437609971,
-      name: r'dosingAt',
+    r'dosingEndAt': IndexSchema(
+      id: 3289969484654078346,
+      name: r'dosingEndAt',
       unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
-          name: r'dosingAt',
+          name: r'dosingEndAt',
           type: IndexType.value,
           caseSensitive: false,
         )
@@ -109,10 +114,11 @@ void _medicationItemDtoSerialize(
 ) {
   writer.writeLong(offsets[0], object.dosage);
   writer.writeLong(offsets[1], object.dosageFrequency);
-  writer.writeDateTime(offsets[2], object.dosingAt);
-  writer.writeBool(offsets[3], object.isCompleted);
-  writer.writeBool(offsets[4], object.isOverflow);
+  writer.writeDateTime(offsets[2], object.dosingEndAt);
+  writer.writeDateTime(offsets[3], object.dosingStartAt);
+  writer.writeBool(offsets[4], object.isCompleted);
   writer.writeString(offsets[5], object.name);
+  writer.writeLong(offsets[6], object.todayDosage);
 }
 
 MedicationItemDto _medicationItemDtoDeserialize(
@@ -124,11 +130,12 @@ MedicationItemDto _medicationItemDtoDeserialize(
   final object = MedicationItemDto(
     dosage: reader.readLong(offsets[0]),
     dosageFrequency: reader.readLong(offsets[1]),
-    dosingAt: reader.readDateTime(offsets[2]),
+    dosingEndAt: reader.readDateTime(offsets[2]),
+    dosingStartAt: reader.readDateTime(offsets[3]),
     id: id,
-    isCompleted: reader.readBoolOrNull(offsets[3]) ?? false,
-    isOverflow: reader.readBoolOrNull(offsets[4]) ?? false,
+    isCompleted: reader.readBoolOrNull(offsets[4]) ?? false,
     name: reader.readString(offsets[5]),
+    todayDosage: reader.readLong(offsets[6]),
   );
   return object;
 }
@@ -147,11 +154,13 @@ P _medicationItemDtoDeserializeProp<P>(
     case 2:
       return (reader.readDateTime(offset)) as P;
     case 3:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDateTime(offset)) as P;
     case 4:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -180,10 +189,10 @@ extension MedicationItemDtoQueryWhereSort
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhere>
-      anyDosingAt() {
+      anyDosingEndAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'dosingAt'),
+        const IndexWhereClause.any(indexName: r'dosingEndAt'),
       );
     });
   }
@@ -269,44 +278,44 @@ extension MedicationItemDtoQueryWhere
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
-      dosingAtEqualTo(DateTime dosingAt) {
+      dosingEndAtEqualTo(DateTime dosingEndAt) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'dosingAt',
-        value: [dosingAt],
+        indexName: r'dosingEndAt',
+        value: [dosingEndAt],
       ));
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
-      dosingAtNotEqualTo(DateTime dosingAt) {
+      dosingEndAtNotEqualTo(DateTime dosingEndAt) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'dosingAt',
+              indexName: r'dosingEndAt',
               lower: [],
-              upper: [dosingAt],
+              upper: [dosingEndAt],
               includeUpper: false,
             ))
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'dosingAt',
-              lower: [dosingAt],
+              indexName: r'dosingEndAt',
+              lower: [dosingEndAt],
               includeLower: false,
               upper: [],
             ));
       } else {
         return query
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'dosingAt',
-              lower: [dosingAt],
+              indexName: r'dosingEndAt',
+              lower: [dosingEndAt],
               includeLower: false,
               upper: [],
             ))
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'dosingAt',
+              indexName: r'dosingEndAt',
               lower: [],
-              upper: [dosingAt],
+              upper: [dosingEndAt],
               includeUpper: false,
             ));
       }
@@ -314,14 +323,14 @@ extension MedicationItemDtoQueryWhere
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
-      dosingAtGreaterThan(
-    DateTime dosingAt, {
+      dosingEndAtGreaterThan(
+    DateTime dosingEndAt, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'dosingAt',
-        lower: [dosingAt],
+        indexName: r'dosingEndAt',
+        lower: [dosingEndAt],
         includeLower: include,
         upper: [],
       ));
@@ -329,33 +338,33 @@ extension MedicationItemDtoQueryWhere
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
-      dosingAtLessThan(
-    DateTime dosingAt, {
+      dosingEndAtLessThan(
+    DateTime dosingEndAt, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'dosingAt',
+        indexName: r'dosingEndAt',
         lower: [],
-        upper: [dosingAt],
+        upper: [dosingEndAt],
         includeUpper: include,
       ));
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterWhereClause>
-      dosingAtBetween(
-    DateTime lowerDosingAt,
-    DateTime upperDosingAt, {
+      dosingEndAtBetween(
+    DateTime lowerDosingEndAt,
+    DateTime upperDosingEndAt, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'dosingAt',
-        lower: [lowerDosingAt],
+        indexName: r'dosingEndAt',
+        lower: [lowerDosingEndAt],
         includeLower: includeLower,
-        upper: [upperDosingAt],
+        upper: [upperDosingEndAt],
         includeUpper: includeUpper,
       ));
     });
@@ -522,45 +531,45 @@ extension MedicationItemDtoQueryFilter
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
-      dosingAtEqualTo(DateTime value) {
+      dosingEndAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dosingAt',
+        property: r'dosingEndAt',
         value: value,
       ));
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
-      dosingAtGreaterThan(
+      dosingEndAtGreaterThan(
     DateTime value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'dosingAt',
+        property: r'dosingEndAt',
         value: value,
       ));
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
-      dosingAtLessThan(
+      dosingEndAtLessThan(
     DateTime value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'dosingAt',
+        property: r'dosingEndAt',
         value: value,
       ));
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
-      dosingAtBetween(
+      dosingEndAtBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
@@ -568,7 +577,63 @@ extension MedicationItemDtoQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'dosingAt',
+        property: r'dosingEndAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      dosingStartAtEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dosingStartAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      dosingStartAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dosingStartAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      dosingStartAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dosingStartAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      dosingStartAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dosingStartAt',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -656,16 +721,6 @@ extension MedicationItemDtoQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isCompleted',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
-      isOverflowEqualTo(bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isOverflow',
         value: value,
       ));
     });
@@ -806,6 +861,62 @@ extension MedicationItemDtoQueryFilter
       ));
     });
   }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      todayDosageEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'todayDosage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      todayDosageGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'todayDosage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      todayDosageLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'todayDosage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterFilterCondition>
+      todayDosageBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'todayDosage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension MedicationItemDtoQueryObject
@@ -845,16 +956,30 @@ extension MedicationItemDtoQuerySortBy
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      sortByDosingAt() {
+      sortByDosingEndAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dosingAt', Sort.asc);
+      return query.addSortBy(r'dosingEndAt', Sort.asc);
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      sortByDosingAtDesc() {
+      sortByDosingEndAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dosingAt', Sort.desc);
+      return query.addSortBy(r'dosingEndAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      sortByDosingStartAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dosingStartAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      sortByDosingStartAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dosingStartAt', Sort.desc);
     });
   }
 
@@ -873,20 +998,6 @@ extension MedicationItemDtoQuerySortBy
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      sortByIsOverflow() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isOverflow', Sort.asc);
-    });
-  }
-
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      sortByIsOverflowDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isOverflow', Sort.desc);
-    });
-  }
-
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
       sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -897,6 +1008,20 @@ extension MedicationItemDtoQuerySortBy
       sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      sortByTodayDosage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'todayDosage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      sortByTodayDosageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'todayDosage', Sort.desc);
     });
   }
 }
@@ -932,16 +1057,30 @@ extension MedicationItemDtoQuerySortThenBy
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      thenByDosingAt() {
+      thenByDosingEndAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dosingAt', Sort.asc);
+      return query.addSortBy(r'dosingEndAt', Sort.asc);
     });
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      thenByDosingAtDesc() {
+      thenByDosingEndAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dosingAt', Sort.desc);
+      return query.addSortBy(r'dosingEndAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      thenByDosingStartAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dosingStartAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      thenByDosingStartAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dosingStartAt', Sort.desc);
     });
   }
 
@@ -973,20 +1112,6 @@ extension MedicationItemDtoQuerySortThenBy
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      thenByIsOverflow() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isOverflow', Sort.asc);
-    });
-  }
-
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
-      thenByIsOverflowDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isOverflow', Sort.desc);
-    });
-  }
-
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
       thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -997,6 +1122,20 @@ extension MedicationItemDtoQuerySortThenBy
       thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      thenByTodayDosage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'todayDosage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QAfterSortBy>
+      thenByTodayDosageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'todayDosage', Sort.desc);
     });
   }
 }
@@ -1018,9 +1157,16 @@ extension MedicationItemDtoQueryWhereDistinct
   }
 
   QueryBuilder<MedicationItemDto, MedicationItemDto, QDistinct>
-      distinctByDosingAt() {
+      distinctByDosingEndAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dosingAt');
+      return query.addDistinctBy(r'dosingEndAt');
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QDistinct>
+      distinctByDosingStartAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dosingStartAt');
     });
   }
 
@@ -1031,17 +1177,17 @@ extension MedicationItemDtoQueryWhereDistinct
     });
   }
 
-  QueryBuilder<MedicationItemDto, MedicationItemDto, QDistinct>
-      distinctByIsOverflow() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isOverflow');
-    });
-  }
-
   QueryBuilder<MedicationItemDto, MedicationItemDto, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, MedicationItemDto, QDistinct>
+      distinctByTodayDosage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'todayDosage');
     });
   }
 }
@@ -1068,9 +1214,16 @@ extension MedicationItemDtoQueryProperty
   }
 
   QueryBuilder<MedicationItemDto, DateTime, QQueryOperations>
-      dosingAtProperty() {
+      dosingEndAtProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'dosingAt');
+      return query.addPropertyName(r'dosingEndAt');
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, DateTime, QQueryOperations>
+      dosingStartAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dosingStartAt');
     });
   }
 
@@ -1081,15 +1234,15 @@ extension MedicationItemDtoQueryProperty
     });
   }
 
-  QueryBuilder<MedicationItemDto, bool, QQueryOperations> isOverflowProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isOverflow');
-    });
-  }
-
   QueryBuilder<MedicationItemDto, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<MedicationItemDto, int, QQueryOperations> todayDosageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'todayDosage');
     });
   }
 }

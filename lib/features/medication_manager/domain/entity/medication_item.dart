@@ -17,11 +17,14 @@ class MedicationItem with _$MedicationItem {
     /// 用量（ex.２錠）
     required int dosage,
 
-    /// 服用期間
-    required DateTime dosingAt,
+    /// 今日の服用数
+    @Default(0) int todayDosage,
 
-    /// 服用回数overフラグ
-    @Default(false) bool isOverflow,
+    /// 服用開始
+    required DateTime dosingStartAt,
+
+    /// 服用終了
+    required DateTime dosingEndAt,
 
     ///　期間終了フラグ
     @Default(false) bool isCompleted,
@@ -32,23 +35,30 @@ class MedicationItem with _$MedicationItem {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingAt,
+    required int todayDosage,
+    required DateTime dosingStartAt,
+    required DateTime dosingEndAt,
   }) =>
       copyWith(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: dosingAt,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: dosingEndAt,
       );
-
-  MedicationItem toOverflow({required bool toOverflow}) =>
-      copyWith(isOverflow: toOverflow);
 
   MedicationItem toCompleted({required bool toCompleted}) =>
       copyWith(isCompleted: toCompleted);
 
+  MedicationItem takeTodayDosage({required int takeTodayDosage}) =>
+      copyWith(todayDosage: takeTodayDosage);
+
   bool get isEmptyName => name.isEmpty;
 
-  String get stringDosingAt =>
-      DateFormat('yyyy-MM-dd').format(dosingAt).substring(0, 10);
+  String get stringDosingStartAt =>
+      DateFormat('yyyy-MM-dd').format(dosingEndAt).substring(0, 10);
+
+  String get stringDosingEndAt =>
+      DateFormat('yyyy-MM-dd').format(dosingStartAt).substring(0, 10);
 }

@@ -9,6 +9,7 @@ import 'package:medication_manager/features/medication_manager/presentation/crea
 import 'package:medication_manager/features/medication_manager/presentation/create/widgets/medication_info_form.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../utils/logger.dart';
 import '../../domain/entity/medication_item.dart';
 import '../medication_list_async_notifier.dart';
 
@@ -36,30 +37,38 @@ class CreatePage extends ConsumerWidget {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required String dosingAt,
+    required int todayDosage,
+    required String dosingStartAt,
+    required String dosingEndAt,
   }) async {
     final asyncNotifier =
         ref.read(medicationListAsyncNotifierProvider.notifier);
-    final parseDosingPeriod = DateFormat('yyyy-MM-dd').parse(dosingAt);
+    final parseDosingEndPeriod = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
     if (item == null) {
       await asyncNotifier.addTodoItem(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: parseDosingPeriod,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: parseDosingEndPeriod,
       );
     } else {
       if (name == item!.name &&
           dosageFrequency == item!.dosageFrequency &&
           dosage == item!.dosage &&
-          parseDosingPeriod == item!.dosingAt) {
+          parseDosingEndPeriod == item!.dosingEndAt &&
+          todayDosage == item!.todayDosage &&
+          paraseDosingStartPeriod == item!.dosingStartAt) {
         return;
       }
       await asyncNotifier.editMedicationItem(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: parseDosingPeriod,
+        todayDosage: todayDosage,
+        dosingStartAt: parseDosingStartPeriod,
+        dosingEndAt: parseDosingEndPeriod,
         item: item!,
       );
     }
@@ -113,11 +122,13 @@ class CreatePage extends ConsumerWidget {
           final dosageFrequency =
               ref.watch(dosageFrequencyCountFamilyProvider(item));
           final dosage = ref.watch(dosageCountFamilyProvider(item));
-          final dosingAt = ref.watch(fixedTimeProvider(item));
+          final dosingEndAt = ref.watch(fixedTimeProvider(item));
+          final todayDosage = ref.watch(todayDosageCountFamilyProvider(item));
           if (name.isEmpty ||
               dosageFrequency == 0 ||
               dosage == 0 ||
-              dosingAt.isEmpty) {
+              dosingEndAt.isEmpty ||
+              dosingStartAt.isEmpty) {
             return;
           }
           await onTap(
@@ -125,7 +136,9 @@ class CreatePage extends ConsumerWidget {
             name: name,
             dosageFrequency: dosageFrequency,
             dosage: dosage,
-            dosingAt: dosingAt,
+            todayDosage: todayDosage,
+            dosingStartAt: dosingStartAt,
+            dosingEndAt: dosingEndAt,
           );
           //　エラーが生じた場合画面遷移をさせないよう早期リターン
           if (ref.read(medicationListAsyncNotifierProvider) is AsyncError) {

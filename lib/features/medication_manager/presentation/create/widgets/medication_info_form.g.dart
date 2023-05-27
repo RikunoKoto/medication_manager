@@ -8,7 +8,7 @@ part of 'medication_info_form.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$periodFamilyHash() => r'5843cb7b9684304088d43bf038c8ba8d6fee0519';
+String _$periodFamilyHash() => r'c6271f7f52ff9f9ea4a890f3601bb23022630116';
 
 /// Copied from Dart SDK
 class _SystemHash {

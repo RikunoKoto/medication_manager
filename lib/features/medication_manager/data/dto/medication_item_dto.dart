@@ -11,8 +11,9 @@ class MedicationItemDto {
     required this.name,
     required this.dosageFrequency,
     required this.dosage,
-    required this.dosingAt,
-    this.isOverflow = false,
+    required this.todayDosage,
+    required this.dosingStartAt,
+    required this.dosingEndAt,
     this.isCompleted = false,
   });
 
@@ -22,8 +23,9 @@ class MedicationItemDto {
         name: item.name,
         dosageFrequency: item.dosageFrequency,
         dosage: item.dosage,
-        dosingAt: item.dosingAt,
-        isOverflow: item.isOverflow,
+        todayDosage: item.todayDosage,
+        dosingStartAt: item.dosingStartAt,
+        dosingEndAt: item.dosingEndAt,
         isCompleted: item.isCompleted,
       );
 
@@ -35,10 +37,12 @@ class MedicationItemDto {
 
   final int dosage;
 
-  @Index()
-  final DateTime dosingAt;
+  final int todayDosage;
 
-  final bool isOverflow;
+  final DateTime dosingStartAt;
+
+  @Index()
+  final DateTime dosingEndAt;
 
   //　完了状態で検索する為
   @Index()
@@ -49,8 +53,9 @@ class MedicationItemDto {
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: dosingAt,
-        isOverflow: isOverflow,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: dosingEndAt,
         isCompleted: isCompleted,
       );
 }

@@ -5,12 +5,14 @@ import 'package:gap/gap.dart';
 class CustomCountButton extends StatelessWidget {
   const CustomCountButton({
     required this.count,
-    required this.countNotifier,
+    required this.onIncrementTap,
+    required this.onDecrementTap,
     super.key,
   });
 
   final String count;
-  final StateController<int> countNotifier;
+  final void Function() onDecrementTap;
+  final void Function() onIncrementTap;
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +23,7 @@ class CustomCountButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           GestureDetector(
-            onTap: () => countNotifier.update((state) {
-              if (state < 10) {
-                state++;
-              }
-              return state;
-            }),
+            onTap: onIncrementTap,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -48,12 +45,7 @@ class CustomCountButton extends StatelessWidget {
           ),
           const Gap(5),
           GestureDetector(
-            onTap: () => countNotifier.update((state) {
-              if (state > 0) {
-                state--;
-              }
-              return state;
-            }),
+            onTap: onDecrementTap,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(

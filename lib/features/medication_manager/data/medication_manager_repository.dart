@@ -46,7 +46,7 @@ class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
         .where()
-        .dosingAtLessThan(DateTime.now())
+        .dosingEndAtLessThan(DateTime.now())
         .filter()
         .isCompletedEqualTo(true)
         .findAll();

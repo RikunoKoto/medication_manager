@@ -15,7 +15,7 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
   FutureOr<MedicationList> build() async {
     final medicationList = MedicationList(items: []);
     final medicationItemList = await ref.read(fetchMedicationUsecaseProvider)();
-    
+
     final result = medicationList.fetch(medicationItemList);
     return result;
   }
@@ -24,14 +24,18 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingAt,
+    required int todayDosage,
+    required DateTime dosingStartAt,
+    required DateTime dosingEndAt,
   }) async {
     state = await AsyncValue.guard(() async {
       final medicationItem = await ref.read(addMedicationUsecaseProvider)(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: dosingAt,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: dosingEndAt,
       );
 
       return state.value!.add(medicationItem);
@@ -42,7 +46,9 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingAt,
+    required int todayDosage,
+    required DateTime dosingStartAt,
+    required DateTime dosingEndAt,
     required MedicationItem item,
   }) async {
     state = await AsyncValue.guard(() async {
@@ -50,7 +56,9 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: dosingAt,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: dosingEndAt,
         item: item,
       );
 

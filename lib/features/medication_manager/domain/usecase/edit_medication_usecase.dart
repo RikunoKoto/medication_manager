@@ -21,15 +21,20 @@ class EditMedicationUsecase {
     required String name,
     required int dosageFrequency,
     required int dosage,
-    required DateTime dosingAt,
+    required int todayDosage,
+    required DateTime dosingStartAt,
+    required DateTime dosingEndAt,
     required MedicationItem item,
   }) async {
     try {
+      logger.finest('***************$todayDosage');
       final updatedMedicationItem = item.update(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
-        dosingAt: dosingAt,
+        todayDosage: todayDosage,
+        dosingStartAt: dosingStartAt,
+        dosingEndAt: dosingEndAt,
       );
       await repository.edit(updatedMedicationItem);
 

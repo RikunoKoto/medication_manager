@@ -90,7 +90,7 @@ class MedicationCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Text(
-                        '服用期間 ${item.stringDosingAt} 迄',
+                        '服用期間 ${item.stringDosingEndAt} 迄',
                         style: TextStyle(
                           color: colors.onSurface.withOpacity(.5),
                           fontSize: 13,
