@@ -26,6 +26,73 @@ Raw<TextEditingController> _nameTextEditingController(
   return controller;
 }
 
+// 服用開始期間を保持しているprovider
+@riverpod
+String dosingStartAtFamily(DosingStartAtFamilyRef ref, MedicationItem? item) {
+  if (item == null) {
+    return '';
+  }
+  final stringDosingStartAt = item.stringDosingStartAt;
+  return stringDosingStartAt;
+}
+
+// 服用開始期間の確定した値を保持するprovider
+final fixedStartTimeProvider =
+    StateProvider.autoDispose.family<String, MedicationItem?>(
+  (ref, item) {
+    if (item == null) {
+      return '';
+    }
+    final dosingStartAt = item.stringDosingStartAt;
+    return dosingStartAt;
+  },
+);
+
+// 服用終了期間の確定した値を保持するprovider
+final fixedEndTimeProvider =
+    StateProvider.autoDispose.family<String, MedicationItem?>(
+  (ref, item) {
+    if (item == null) {
+      return '';
+    }
+    final dosingEndAt = item.stringDosingEndAt;
+    return dosingEndAt;
+  },
+);
+
+// 服用回数を保持するprovider
+final dosageFrequencyCountFamilyProvider =
+    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
+  if (item == null) {
+    return 0;
+  }
+  final dosageFrequency = item.dosageFrequency;
+  return dosageFrequency;
+});
+
+// 服用量を保持するprovider
+final dosageCountFamilyProvider =
+    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
+  if (item == null) {
+    return 0;
+  }
+  final dosage = item.dosage;
+  return dosage;
+});
+
+//今日の服用回数を保持するprovider
+final todayDosageCountFamilyProvider =
+    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
+  if (item == null) {
+    return 0;
+  }
+  if (item.todayDosage > item.dosageFrequency) {
+    return item.dosageFrequency;
+  }
+  final dosage = item.todayDosage;
+  return dosage;
+});
+
 class CreatePage extends ConsumerWidget {
   const CreatePage({this.item, super.key});
 
@@ -43,23 +110,24 @@ class CreatePage extends ConsumerWidget {
   }) async {
     final asyncNotifier =
         ref.read(medicationListAsyncNotifierProvider.notifier);
-    final parseDosingEndPeriod = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
+    final parseDosingEnd = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
+    final parseDosingStart = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
     if (item == null) {
       await asyncNotifier.addTodoItem(
         name: name,
         dosageFrequency: dosageFrequency,
         dosage: dosage,
         todayDosage: todayDosage,
-        dosingStartAt: dosingStartAt,
-        dosingEndAt: parseDosingEndPeriod,
+        dosingStartAt: parseDosingStart,
+        dosingEndAt: parseDosingEnd,
       );
     } else {
       if (name == item!.name &&
           dosageFrequency == item!.dosageFrequency &&
           dosage == item!.dosage &&
-          parseDosingEndPeriod == item!.dosingEndAt &&
           todayDosage == item!.todayDosage &&
-          paraseDosingStartPeriod == item!.dosingStartAt) {
+          parseDosingStart == item!.dosingStartAt &&
+          parseDosingEnd == item!.dosingEndAt) {
         return;
       }
       await asyncNotifier.editMedicationItem(
@@ -67,8 +135,8 @@ class CreatePage extends ConsumerWidget {
         dosageFrequency: dosageFrequency,
         dosage: dosage,
         todayDosage: todayDosage,
-        dosingStartAt: parseDosingStartPeriod,
-        dosingEndAt: parseDosingEndPeriod,
+        dosingStartAt: parseDosingStart,
+        dosingEndAt: parseDosingEnd,
         item: item!,
       );
     }
@@ -122,8 +190,10 @@ class CreatePage extends ConsumerWidget {
           final dosageFrequency =
               ref.watch(dosageFrequencyCountFamilyProvider(item));
           final dosage = ref.watch(dosageCountFamilyProvider(item));
-          final dosingEndAt = ref.watch(fixedTimeProvider(item));
           final todayDosage = ref.watch(todayDosageCountFamilyProvider(item));
+          final dosingStartAt = ref.watch(fixedStartTimeProvider(item));
+          final dosingEndAt = ref.watch(fixedEndTimeProvider(item));
+
           if (name.isEmpty ||
               dosageFrequency == 0 ||
               dosage == 0 ||

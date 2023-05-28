@@ -114,4 +114,87 @@ class _NameTextEditingControllerProvider
     return _SystemHash.finish(hash);
   }
 }
+
+String _$dosingStartAtFamilyHash() =>
+    r'3789b5954bd35bae173fb8af7b28be7e2e6216ca';
+typedef DosingStartAtFamilyRef = AutoDisposeProviderRef<String>;
+
+/// See also [dosingStartAtFamily].
+@ProviderFor(dosingStartAtFamily)
+const dosingStartAtFamilyProvider = DosingStartAtFamilyFamily();
+
+/// See also [dosingStartAtFamily].
+class DosingStartAtFamilyFamily extends Family<String> {
+  /// See also [dosingStartAtFamily].
+  const DosingStartAtFamilyFamily();
+
+  /// See also [dosingStartAtFamily].
+  DosingStartAtFamilyProvider call(
+    MedicationItem? item,
+  ) {
+    return DosingStartAtFamilyProvider(
+      item,
+    );
+  }
+
+  @override
+  DosingStartAtFamilyProvider getProviderOverride(
+    covariant DosingStartAtFamilyProvider provider,
+  ) {
+    return call(
+      provider.item,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'dosingStartAtFamilyProvider';
+}
+
+/// See also [dosingStartAtFamily].
+class DosingStartAtFamilyProvider extends AutoDisposeProvider<String> {
+  /// See also [dosingStartAtFamily].
+  DosingStartAtFamilyProvider(
+    this.item,
+  ) : super.internal(
+          (ref) => dosingStartAtFamily(
+            ref,
+            item,
+          ),
+          from: dosingStartAtFamilyProvider,
+          name: r'dosingStartAtFamilyProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$dosingStartAtFamilyHash,
+          dependencies: DosingStartAtFamilyFamily._dependencies,
+          allTransitiveDependencies:
+              DosingStartAtFamilyFamily._allTransitiveDependencies,
+        );
+
+  final MedicationItem? item;
+
+  @override
+  bool operator ==(Object other) {
+    return other is DosingStartAtFamilyProvider && other.item == item;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, item.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

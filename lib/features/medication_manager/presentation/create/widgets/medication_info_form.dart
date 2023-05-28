@@ -1,94 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:medication_manager/common_widgets/common_divider.dart';
 import 'package:medication_manager/features/medication_manager/presentation/create/widgets/custom_count_button.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../../common_widgets/common_setting_menu_tile.dart';
+import '../../../../../utils/logger.dart';
 import '../../../domain/entity/medication_item.dart';
-import 'cupertion_data_picker_dialog.dart';
-
-part 'medication_info_form.g.dart';
-
-// 期間を保持しているか確認して返すprovider
-@riverpod
-String periodFamily(PeriodFamilyRef ref, MedicationItem? item) {
-  if (item == null) {
-    return '';
-  }
-  final periodTime = item.stringDosingEndAt;
-  return periodTime;
-}
-
-// 確認ボタンが押下された後の時間を保持するprovider
-final fixedTimeProvider =
-    StateProvider.autoDispose.family<String, MedicationItem?>(
-  (ref, item) {
-    if (item == null) {
-      return '';
-    }
-    final dosingEndAt = item.stringDosingEndAt;
-    return dosingEndAt;
-  },
-);
-
-// 服用回数を保持するprovider
-final dosageFrequencyCountFamilyProvider =
-    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
-  if (item == null) {
-    return 0;
-  }
-  final dosageFrequency = item.dosageFrequency;
-  return dosageFrequency;
-});
-
-// 服用量を保持するprovider
-final dosageCountFamilyProvider =
-    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
-  if (item == null) {
-    return 0;
-  }
-  final dosage = item.dosage;
-  return dosage;
-});
-
-//今日の服用回数を保持するprovider
-final todayDosageCountFamilyProvider =
-    StateProvider.autoDispose.family<int, MedicationItem?>((ref, item) {
-  if (item == null) {
-    return 0;
-  }
-  if (item.todayDosage > item.dosageFrequency) {
-    return item.dosageFrequency;
-  }
-  final dosage = item.todayDosage;
-  return dosage;
-});
+import '../create_page.dart';
 
 class MedicationInfoForm extends ConsumerWidget {
   const MedicationInfoForm({required this.item, super.key});
 
   final MedicationItem? item;
 
-  void dataPicker(
-    BuildContext context,
-    String dosingAt,
-    StateController<String> fixedNotifier,
-  ) {
-    showDialog<dynamic>(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertionDatePickerDialog(
-          dosingAt: dosingAt,
-          fixedNotifier: fixedNotifier,
-        );
-      },
+  Future<void> dateRangePciker({
+    required BuildContext context,
+    required String dosingAt,
+    required StateController<String> fixedStartNotifier,
+    required StateController<String> fixedEndNotifier,
+  }) async {
+    /// HACK: datetimeを＋９時間する突貫工事
+    final dosingAtFormat = dosingAt.isEmpty
+        ? DateFormat('yyyy-MM-dd').format(
+            DateTime.now().toUtc().add(const Duration(hours: 9)),
+          )
+        : dosingAt;
+    logger.fine(dosingAtFormat);
+    final initialTime = DateFormat('yyyy-MM-dd', 'ja_JP').parse(dosingAtFormat);
+    final initialDateRange = DateTimeRange(
+      start: initialTime,
+      end: initialTime.add(const Duration(hours: 24 * 3)),
     );
+
+    final dateRange = await showDateRangePicker(
+      context: context,
+      currentDate: DateTime.now().toUtc().add(const Duration(hours: 9)),
+      initialDateRange: initialDateRange,
+      firstDate: DateTime(DateTime.now().year),
+      lastDate: DateTime(DateTime.now().year + 30),
+    );
+
+    if (dateRange != null) {
+      fixedStartNotifier
+          .update((state) => DateFormat('yyyy-MM-dd').format(dateRange.start));
+      fixedEndNotifier
+          .update((state) => DateFormat('yyyy-MM-dd').format(dateRange.end));
+    } else {
+      return;
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dosingAt = ref.watch(periodFamilyProvider(item));
-    final fixedTime = ref.watch(fixedTimeProvider(item));
+    final dosingStartAt = ref.watch(dosingStartAtFamilyProvider(item));
+    final fixedStartTime = ref.watch(fixedStartTimeProvider(item));
+    final fixedStartNotifier = ref.watch(fixedStartTimeProvider(item).notifier);
+    final fixedEndTime = ref.watch(fixedEndTimeProvider(item));
+    final fixedEndNotifier = ref.watch(fixedEndTimeProvider(item).notifier);
     final dosageFrequencyCount =
         ref.watch(dosageFrequencyCountFamilyProvider(item));
     final dosageFrequencyCountNotifier =
@@ -96,11 +65,10 @@ class MedicationInfoForm extends ConsumerWidget {
     final dosageCount = ref.watch(dosageCountFamilyProvider(item));
     final dosageCountNotifier =
         ref.watch(dosageCountFamilyProvider(item).notifier);
-    final fixedNotifier = ref.watch(fixedTimeProvider(item).notifier);
-    final colors = Theme.of(context).colorScheme;
     final todayDosageCount = ref.watch(todayDosageCountFamilyProvider(item));
     final todayDosageCountNotifier =
         ref.watch(todayDosageCountFamilyProvider(item).notifier);
+    final colors = Theme.of(context).colorScheme;
     return LimitedBox(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -108,7 +76,7 @@ class MedicationInfoForm extends ConsumerWidget {
           borderRadius: BorderRadius.circular(15),
           child: Column(
             children: [
-              MenuTile(
+              CommonSettingMenuTile(
                 title: CustomCountButton(
                   count: dosageFrequencyCount > 0
                       ? '$dosageFrequencyCount回'
@@ -141,7 +109,7 @@ class MedicationInfoForm extends ConsumerWidget {
                 isTrailing: false,
               ),
               const CommonDivider(leftIndent: 15, rightIndent: 15),
-              MenuTile(
+              CommonSettingMenuTile(
                 title: CustomCountButton(
                   count: dosageCount > 0 ? '$dosageCount錠' : '設定なし',
                   onIncrementTap: () => dosageCountNotifier.update((state) {
@@ -167,7 +135,7 @@ class MedicationInfoForm extends ConsumerWidget {
                 isTrailing: false,
               ),
               const CommonDivider(leftIndent: 15, rightIndent: 15),
-              MenuTile(
+              CommonSettingMenuTile(
                 title: CustomCountButton(
                   count: '$todayDosageCount/$dosageFrequencyCount (回)',
                   onIncrementTap: () =>
@@ -198,9 +166,9 @@ class MedicationInfoForm extends ConsumerWidget {
                 isTrailing: false,
               ),
               const CommonDivider(leftIndent: 15, rightIndent: 15),
-              MenuTile(
+              CommonSettingMenuTile(
                 title: Text(
-                  '$fixedTime迄',
+                  '$fixedStartTime ～',
                   style: TextStyle(color: colors.onSurface.withOpacity(.5)),
                 ),
                 leading: Text(
@@ -210,56 +178,37 @@ class MedicationInfoForm extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onTap: () {
-                  if (dosingAt.isNotEmpty) {
-                    fixedNotifier.update((state) => dosingAt);
+                onTap: () async {
+                  if (dosingStartAt.isNotEmpty) {
+                    fixedEndNotifier.update((state) => dosingStartAt);
                   }
-                  dataPicker(context, dosingAt, fixedNotifier);
+
+                  await dateRangePciker(
+                    context: context,
+                    dosingAt: dosingStartAt,
+                    fixedStartNotifier: fixedStartNotifier,
+                    fixedEndNotifier: fixedEndNotifier,
+                  );
                 },
+              ),
+              const CommonDivider(leftIndent: 15, rightIndent: 15),
+              CommonSettingMenuTile(
+                title: Text(
+                  '$fixedEndTime 迄',
+                  style: TextStyle(color: colors.onSurface.withOpacity(.5)),
+                ),
+                leading: Text(
+                  '服用期間',
+                  style: TextStyle(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                isTrailing: false,
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class MenuTile extends StatelessWidget {
-  const MenuTile({
-    required this.title,
-    required this.leading,
-    this.onTap,
-    this.isTrailing = true,
-    super.key,
-  });
-
-  final Widget title;
-  final Widget leading;
-  final bool isTrailing;
-
-  final void Function()? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.surfaceVariant,
-      ),
-      child: ListTile(
-        leading: leading,
-        title: Align(
-          alignment: Alignment.centerRight,
-          child: title,
-        ),
-        trailing: isTrailing
-            ? Icon(
-                Icons.chevron_right,
-                color: colors.onSurfaceVariant,
-              )
-            : null,
-        onTap: onTap,
       ),
     );
   }

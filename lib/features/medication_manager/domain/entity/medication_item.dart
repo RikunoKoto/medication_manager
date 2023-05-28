@@ -56,6 +56,8 @@ class MedicationItem with _$MedicationItem {
 
   bool get isEmptyName => name.isEmpty;
 
+  bool get isTakeDosage => todayDosage == dosageFrequency;
+
   String get stringDosingStartAt =>
       DateFormat('yyyy-MM-dd').format(dosingEndAt).substring(0, 10);
 
