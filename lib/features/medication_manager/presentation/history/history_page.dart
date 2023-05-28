@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../utils/logger.dart';
-import '../medication_list_async_notifier.dart';
 import '../medication_list/widgets/medication_card.dart';
+import '../medication_list_async_notifier.dart';
 import 'history_async_notifier.dart';
 
 class HistoryPage extends ConsumerWidget {
@@ -35,7 +35,11 @@ class HistoryPage extends ConsumerWidget {
                       onDismissed: (direction) async {
                         await notifier.removeMedicationItem(id: index);
                       },
-                      child: MedicationCard(item: item, onPressed: () async {}),
+                      child: MedicationCard(
+                        item: item,
+                        onPillIconPressed: () async {},
+                        onEditIconPressed: () async {},
+                      ),
                     );
                   },
                 ),

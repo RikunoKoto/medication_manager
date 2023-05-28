@@ -2,9 +2,9 @@ import 'package:medication_manager/features/medication_manager/domain/usecase/fe
 import 'package:medication_manager/features/medication_manager/presentation/medication_list_async_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../utils/logger.dart';
 import '../../domain/entity/medication_list.dart';
 import '../../domain/usecase/delete_medication_usecase.dart';
-import '../../domain/usecase/fetch_medication_usecase.dart';
 
 part 'history_async_notifier.g.dart';
 
@@ -16,7 +16,8 @@ class HistoryAsyncNotifier extends _$HistoryAsyncNotifier {
     final medicationItemList =
         await ref.read(fetchCompletedMedicationUsecaseProvider)();
     final result = medicationList.fetch(medicationItemList);
-    ref.invalidate(medicationListAsyncNotifierProvider);
+    //ref.invalidate(medicationListAsyncNotifierProvider);
+    logger.finest(result);
     return result;
   }
 

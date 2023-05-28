@@ -37,9 +37,11 @@ class AddMedicationUsecase {
       );
       final medicationItem = await repository.add(medicationItemDto);
       return medicationItem;
-    } catch (e) {
-      logger.warning('DeleteTodosUsecaseでのエラー');
-      throw Exception('メモをローカルから削除できませんでした。');
+    } on Exception catch (e) {
+      logger.warning(
+        'AddTakeTodayDosageUsecase error $e',
+      );
+      throw Exception('値を追加できませんでした。');
     }
   }
 }

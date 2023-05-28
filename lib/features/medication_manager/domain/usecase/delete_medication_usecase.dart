@@ -22,9 +22,11 @@ class DeleteMedicationUsecase {
       await repository.delete(id);
 
       return;
-    } catch (e) {
-      logger.shout('DeleteTodosUsecaseでのエラー');
-      throw Exception('メモをローカルから削除できませんでした。');
+    } on Exception catch (e) {
+      logger.warning(
+        'AddTakeTodayDosageUsecase error $e',
+      );
+      throw Exception('値を削除できませんでした。');
     }
   }
 }

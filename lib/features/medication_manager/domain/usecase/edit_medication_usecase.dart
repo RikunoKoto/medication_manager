@@ -38,9 +38,11 @@ class EditMedicationUsecase {
       await repository.edit(updatedMedicationItem);
 
       return updatedMedicationItem;
-    } catch (e) {
-      logger.warning('DeleteTodosUsecaseでのエラー');
-      throw Exception('メモをローカルから削除できませんでした。');
+    } on Exception catch (e) {
+      logger.warning(
+        'EditMedicationUsecase error $e',
+      );
+      throw Exception('値を更新できませんでした。');
     }
   }
 }

@@ -1,12 +1,10 @@
-import 'package:medication_manager/features/medication_manager/data/medication_manager_repository.dart';
-import 'package:medication_manager/features/medication_manager/domain/usecase/add_take_today_dosage_usecase.dart';
-import 'package:medication_manager/utils/shared_preference_key.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../utils/logger.dart';
 import '../domain/entity/medication_item.dart';
 import '../domain/entity/medication_list.dart';
 import '../domain/usecase/add_medication_usecase.dart';
+import '../domain/usecase/add_take_today_dosage_usecase.dart';
 import '../domain/usecase/delete_medication_usecase.dart';
 import '../domain/usecase/edit_medication_usecase.dart';
 import '../domain/usecase/fetch_medication_usecase.dart';
@@ -18,12 +16,8 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
   @override
   FutureOr<MedicationList> build() async {
     final medicationList = MedicationList(items: []);
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final isar = ref.watch(medicationIsarProvider);
-    final medicationItemList = await ref.read(fetchMedicationUsecaseProvider)(
-      prefs: prefs,
-      isar: isar,
-    );
+
+    final medicationItemList = await ref.read(fetchMedicationUsecaseProvider)();
     final result = medicationList.fetch(medicationItemList);
 
     return result;
@@ -89,7 +83,7 @@ class MedicationListAsyncNotifier extends _$MedicationListAsyncNotifier {
     });
   }
 
-  Future<void> removeMedicationItem({
+  Future<void> deleteMedicationItem({
     required int id,
   }) async {
     state = await AsyncValue.guard(() async {

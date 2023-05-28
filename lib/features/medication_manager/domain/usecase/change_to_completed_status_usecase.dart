@@ -27,9 +27,11 @@ class ChangeToCompletedStatusUsecase {
       final medicationItem = item.toCompleted(toCompleted: toCompleted);
       await repository.edit(medicationItem);
       return medicationItem;
-    } catch (e) {
-      logger.warning('DeleteTodosUsecaseでのエラー');
-      throw Exception('メモをローカルから削除できませんでした。');
+    } on Exception catch (e) {
+      logger.warning(
+        'AddTakeTodayDosageUsecase error $e',
+      );
+      throw Exception('値を変更できませんでした。');
     }
   }
 }

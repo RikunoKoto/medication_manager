@@ -22,11 +22,13 @@ class FetchCompletedMedicationUsecase {
   Future<List<MedicationItem>> call() async {
     try {
       final medicationItems = await repository.fetchCompletedMedication();
-
+      logger.fine(medicationItems);
       return medicationItems;
-    } catch (e) {
-      logger.warning('DeleteTodosUsecaseでのエラー');
-      throw Exception('メモをローカルから削除できませんでした。');
+    } on Exception catch (e) {
+      logger.warning(
+        'AddTakeTodayDosageUsecase error $e',
+      );
+      throw Exception('値を取得できませんでした。');
     }
   }
 }

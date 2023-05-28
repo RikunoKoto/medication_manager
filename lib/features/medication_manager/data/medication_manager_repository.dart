@@ -35,12 +35,12 @@ class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
   Future<List<MedicationItem>> fetchMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
-        // .where()
+        .where()
         // .dosingEndAtGreaterThan(
-        //     // DateTime.now().add(
-        //     //   const Duration(days: -1),
-        //     // ),
-        //     )
+        //   DateTime.now().add(
+        //     const Duration(days: -1),
+        //   ),
+        // )
         .filter()
         .isCompletedEqualTo(false)
         .findAll();
@@ -51,10 +51,10 @@ class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
   Future<List<MedicationItem>> fetchCompletedMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
-        .where()
-        .dosingEndAtLessThan(DateTime.now())
+        // .where()
+        // .dosingEndAtLessThan(DateTime.now())
         .filter()
-        .isCompletedEqualTo(true)
+        .isCompletedEqualTo(false)
         .findAll();
     return medicationItemDtos.map((dto) => dto.toDomain()).toList();
   }

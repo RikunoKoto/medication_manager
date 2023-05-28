@@ -10,12 +10,14 @@ class MedicationCard extends StatelessWidget {
   const MedicationCard({
     super.key,
     required this.item,
-    required this.onPressed,
+    required this.onPillIconPressed,
+    required this.onEditIconPressed,
   });
 
   /// Cardに表示する服薬情報
   final MedicationItem item;
-  final Future<void> Function() onPressed;
+  final Future<void> Function() onPillIconPressed;
+  final Future<void> Function() onEditIconPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class MedicationCard extends StatelessWidget {
                           forbiddenSize: 48,
                         )
                       : IconButton(
-                          onPressed: onPressed,
+                          onPressed: onPillIconPressed,
                           icon: Icon(
                             MyFlutterApp.pills,
                             color: colors.onTertiary,
@@ -69,12 +71,7 @@ class MedicationCard extends StatelessWidget {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: () {
-                            context.push(
-                              '/medication:${item.id}',
-                              extra: item,
-                            );
-                          },
+                          onPressed: onEditIconPressed,
                           icon: Icon(
                             Icons.more_vert,
                             size: 20,
