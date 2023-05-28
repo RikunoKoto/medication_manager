@@ -35,6 +35,12 @@ class MedicationManagerRepositoryImpl implements MedicationManagerRepository {
   Future<List<MedicationItem>> fetchMedication() async {
     final medicationItemDtoCollection = isar.medicationItemDtos;
     final medicationItemDtos = await medicationItemDtoCollection
+        // .where()
+        // .dosingEndAtGreaterThan(
+        //     // DateTime.now().add(
+        //     //   const Duration(days: -1),
+        //     // ),
+        //     )
         .filter()
         .isCompletedEqualTo(false)
         .findAll();

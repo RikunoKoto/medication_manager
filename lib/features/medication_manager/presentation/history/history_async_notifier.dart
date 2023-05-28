@@ -1,4 +1,5 @@
 import 'package:medication_manager/features/medication_manager/domain/usecase/fetch_completed_medication_usecase.dart';
+import 'package:medication_manager/features/medication_manager/presentation/medication_list_async_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entity/medication_list.dart';
@@ -15,6 +16,7 @@ class HistoryAsyncNotifier extends _$HistoryAsyncNotifier {
     final medicationItemList =
         await ref.read(fetchCompletedMedicationUsecaseProvider)();
     final result = medicationList.fetch(medicationItemList);
+    ref.invalidate(medicationListAsyncNotifierProvider);
     return result;
   }
 

@@ -2,27 +2,26 @@
 
 // ignore_for_file: type=lint, implicit_dynamic_parameter, implicit_dynamic_type, implicit_dynamic_method, strict_raw_type
 
-part of 'history_async_notifier.dart';
+part of 'shared_preference_key.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$historyAsyncNotifierHash() =>
-    r'ce7197adc93e73d7a026c094edaa3ea919faaf4d';
+String _$sharedPreferencesHash() => r'0924fb848ccdeb837f448bcb2b685bf4104dbd40';
 
-/// See also [HistoryAsyncNotifier].
-@ProviderFor(HistoryAsyncNotifier)
-final historyAsyncNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    HistoryAsyncNotifier, MedicationList>.internal(
-  HistoryAsyncNotifier.new,
-  name: r'historyAsyncNotifierProvider',
+/// See also [sharedPreferences].
+@ProviderFor(sharedPreferences)
+final sharedPreferencesProvider =
+    AutoDisposeProvider<SharedPreferences>.internal(
+  sharedPreferences,
+  name: r'sharedPreferencesProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$historyAsyncNotifierHash,
+      : _$sharedPreferencesHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$HistoryAsyncNotifier = AutoDisposeAsyncNotifier<MedicationList>;
+typedef SharedPreferencesRef = AutoDisposeProviderRef<SharedPreferences>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

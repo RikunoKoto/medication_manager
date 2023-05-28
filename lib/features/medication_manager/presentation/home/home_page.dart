@@ -6,7 +6,7 @@ import 'package:medication_manager/utils/providers/theme_provider.dart';
 
 import '../history/history_page.dart';
 import '../medication_list/medication_list_page.dart';
-import '../widgets/custom_bottom_navigation_bar.dart';
+import '../../../../common_widgets/custom_bottom_navigation_bar.dart';
 
 final selectedIndexProvider = StateProvider((ref) => 0);
 

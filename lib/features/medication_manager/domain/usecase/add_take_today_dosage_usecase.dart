@@ -20,11 +20,12 @@ class AddTakeTodayDosageUsecase {
   final MedicationManagerRepository repository;
 
   Future<MedicationItem> call({
-    required bool toCompleted,
+    required int todayDosage,
     required MedicationItem item,
   }) async {
     try {
-      final medicationItem = item.toCompleted(toCompleted: toCompleted);
+      logger.fine(todayDosage);
+      final medicationItem = item.takeTodayDosage(takeTodayDosage: todayDosage);
       await repository.edit(medicationItem);
       return medicationItem;
     } catch (e) {

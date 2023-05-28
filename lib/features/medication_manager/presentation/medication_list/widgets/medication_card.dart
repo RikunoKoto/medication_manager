@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medication_manager/features/medication_manager/presentation/medication_list/widgets/icon_with_forbidden_sign.dart';
 import 'package:medication_manager/utils/my_flutter_app_icons.dart';
 
-import '../../domain/entity/medication_item.dart';
+import '../../../domain/entity/medication_item.dart';
 
 class MedicationCard extends StatelessWidget {
   const MedicationCard({
     super.key,
     required this.item,
+    required this.onPressed,
   });
 
   /// Cardに表示する服薬情報
   final MedicationItem item;
+  final Future<void> Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +34,19 @@ class MedicationCard extends StatelessWidget {
                     color: colors.tertiary,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      MyFlutterApp.pills,
-                      color: colors.onTertiary,
-                    ),
-                  ),
+                  child: item.isTakeDosage
+                      ? const IconWithForbiddenSign(
+                          icon: MyFlutterApp.pills,
+                          iconSize: 25,
+                          forbiddenSize: 48,
+                        )
+                      : IconButton(
+                          onPressed: onPressed,
+                          icon: Icon(
+                            MyFlutterApp.pills,
+                            color: colors.onTertiary,
+                          ),
+                        ),
                 ),
               ),
               const Gap(10),
@@ -52,7 +61,7 @@ class MedicationCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '本日の服薬回数   0/${item.dosageFrequency} 回',
+                          '本日の服薬回数   ${item.todayDosage}/${item.dosageFrequency} 回',
                           style: TextStyle(
                             color: colors.onSurface.withOpacity(.5),
                             fontSize: 13,

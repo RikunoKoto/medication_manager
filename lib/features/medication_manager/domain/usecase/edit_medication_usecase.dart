@@ -27,7 +27,6 @@ class EditMedicationUsecase {
     required MedicationItem item,
   }) async {
     try {
-      logger.finest('***************$todayDosage');
       final updatedMedicationItem = item.update(
         name: name,
         dosageFrequency: dosageFrequency,

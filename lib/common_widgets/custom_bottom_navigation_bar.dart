@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/my_flutter_app_icons.dart';
+import '../utils/my_flutter_app_icons.dart';
 
 /// ボトムナビゲーションバーWidget
 class CustomBottomNavigationBar extends StatelessWidget {

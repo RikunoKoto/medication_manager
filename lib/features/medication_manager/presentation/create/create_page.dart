@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:medication_manager/common_widgets/base_frame_widget.dart';
+import 'package:medication_manager/features/medication_manager/domain/usecase/fetch_medication_usecase.dart';
 import 'package:medication_manager/features/medication_manager/presentation/create/widgets/custom_button.dart';
 import 'package:medication_manager/features/medication_manager/presentation/create/widgets/custom_form.dart';
 import 'package:medication_manager/features/medication_manager/presentation/create/widgets/medication_info_form.dart';
@@ -112,6 +113,7 @@ class CreatePage extends ConsumerWidget {
         ref.read(medicationListAsyncNotifierProvider.notifier);
     final parseDosingEnd = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
     final parseDosingStart = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
+
     if (item == null) {
       await asyncNotifier.addTodoItem(
         name: name,
@@ -186,6 +188,7 @@ class CreatePage extends ConsumerWidget {
       ),
       bottomBar: CustomButton(
         onTap: () async {
+          final navigator = Navigator.of(context);
           final name = nameTextEditingController.text;
           final dosageFrequency =
               ref.watch(dosageFrequencyCountFamilyProvider(item));
@@ -193,7 +196,6 @@ class CreatePage extends ConsumerWidget {
           final todayDosage = ref.watch(todayDosageCountFamilyProvider(item));
           final dosingStartAt = ref.watch(fixedStartTimeProvider(item));
           final dosingEndAt = ref.watch(fixedEndTimeProvider(item));
-
           if (name.isEmpty ||
               dosageFrequency == 0 ||
               dosage == 0 ||
@@ -214,9 +216,15 @@ class CreatePage extends ConsumerWidget {
           if (ref.read(medicationListAsyncNotifierProvider) is AsyncError) {
             return;
           }
-          if (context.mounted) {
-            context.pop();
+
+          final parseDosingEnd = DateFormat('yyyy-MM-dd').parse(dosingEndAt);
+          final differenceToday =
+              parseDosingEnd.difference(DateTime.now()).inHours;
+          if (differenceToday < 0) {
+            ref.invalidate(medicationListAsyncNotifierProvider);
           }
+
+          navigator.pop();
         },
         child: Text(
           '保存',

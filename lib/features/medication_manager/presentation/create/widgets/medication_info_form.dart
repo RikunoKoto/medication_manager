@@ -20,22 +20,21 @@ class MedicationInfoForm extends ConsumerWidget {
     required StateController<String> fixedStartNotifier,
     required StateController<String> fixedEndNotifier,
   }) async {
-    /// HACK: datetimeを＋９時間する突貫工事
     final dosingAtFormat = dosingAt.isEmpty
         ? DateFormat('yyyy-MM-dd').format(
-            DateTime.now().toUtc().add(const Duration(hours: 9)),
+            DateTime.now(),
           )
         : dosingAt;
     logger.fine(dosingAtFormat);
     final initialTime = DateFormat('yyyy-MM-dd', 'ja_JP').parse(dosingAtFormat);
     final initialDateRange = DateTimeRange(
       start: initialTime,
-      end: initialTime.add(const Duration(hours: 24 * 3)),
+      end: initialTime,
     );
 
     final dateRange = await showDateRangePicker(
       context: context,
-      currentDate: DateTime.now().toUtc().add(const Duration(hours: 9)),
+      currentDate: DateTime.now(),
       initialDateRange: initialDateRange,
       firstDate: DateTime(DateTime.now().year),
       lastDate: DateTime(DateTime.now().year + 30),

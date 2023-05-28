@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../utils/logger.dart';
 import '../medication_list_async_notifier.dart';
-import '../widgets/medication_card.dart';
+import 'widgets/medication_card.dart';
 
 class MedicationListPage extends ConsumerWidget {
   const MedicationListPage({super.key});
@@ -12,7 +12,6 @@ class MedicationListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncMedicationItems = ref.watch(medicationListAsyncNotifierProvider);
     final notifier = ref.watch(medicationListAsyncNotifierProvider.notifier);
-
     return asyncMedicationItems.when(
       data: (medicationList) {
         logger.finest(medicationList);
@@ -34,7 +33,19 @@ class MedicationListPage extends ConsumerWidget {
                       onDismissed: (direction) async {
                         await notifier.removeMedicationItem(id: item.id);
                       },
-                      child: MedicationCard(item: item),
+                      child: MedicationCard(
+                        item: item,
+                        onPressed: () async {
+                          if (item.isTakeDosage) {
+                            return;
+                          }
+                          final todayDosage = item.todayDosage + 1;
+                          return notifier.addTodayDosage(
+                            todayDosage: todayDosage,
+                            item: item,
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
